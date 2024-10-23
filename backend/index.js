@@ -1,4 +1,3 @@
-
 const express = require("express");
 const mysql = require("mysql2");
 const http = require("http");
@@ -12,7 +11,6 @@ const io = new Server(server);
 
 app.use(cors());
 app.use(express.json());
-
 
 const db = mysql.createConnection({
   host: "localhost",
@@ -29,13 +27,11 @@ db.connect((err) => {
   console.log("Connected to database.");
 });
 
-
 app.post("/api/login", (req, res) => {
   const { username } = req.body;
   const sessionId = uuidv4(); // More secure and unique session ID
   res.json({ sessionId });
 });
-
 
 app.get("/api/comments", (req, res) => {
   db.query("SELECT * FROM comments ORDER BY timestamp DESC", (err, results) => {
@@ -46,7 +42,6 @@ app.get("/api/comments", (req, res) => {
     res.json(results);
   });
 });
-
 
 app.post("/api/comments", (req, res) => {
   const { username, comment } = req.body;
@@ -68,14 +63,13 @@ app.post("/api/comments", (req, res) => {
         id: results.insertId,
         username,
         comment,
-        timestamp: new Date(), 
+        timestamp: new Date(),
       };
-      io.emit("new_comment", newComment); 
+      io.emit("new_comment", newComment);
       res.json(newComment);
     }
   );
 });
-
 
 io.on("connection", (socket) => {
   console.log("A user connected");
@@ -84,7 +78,6 @@ io.on("connection", (socket) => {
     console.log("User disconnected");
   });
 });
-
 
 server.listen(3001, () => {
   console.log("Server is running on http://localhost:3001");
